@@ -1,0 +1,32 @@
+﻿<Window x:Class="TravelAgency.WPF.Views.EmployeeEditDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Сотрудник" Height="250" Width="400" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="110"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="ФИО:" Grid.Row="0" Margin="5"/>
+        <TextBox x:Name="TxtName" Grid.Row="0" Grid.Column="1" Margin="5"/>
+
+        <TextBlock Text="Адрес:" Grid.Row="1" Margin="5"/>
+        <TextBox x:Name="TxtAddress" Grid.Row="1" Grid.Column="1" Margin="5"/>
+
+        <TextBlock Text="Стаж (лет):" Grid.Row="2" Margin="5"/>
+        <TextBox x:Name="TxtExp" Grid.Row="2" Grid.Column="1" Margin="5"/>
+
+        <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Сохранить" Click="Save_Click" Width="90" Margin="5"/>
+            <Button Content="Отмена" Click="Cancel_Click" Width="90" Margin="5"/>
+        </StackPanel>
+    </Grid>
+</Window>

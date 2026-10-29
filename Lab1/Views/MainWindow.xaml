@@ -1,0 +1,227 @@
+﻿<Window x:Class="TravelAgency.WPF.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Турагенство" Height="750" Width="1100"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <TabControl>
+            <!-- ВКЛАДКА 1: ТУРЫ (Поиск, Фильтрация, Сортировка, CRUD) -->
+            <TabItem Header="Туры">
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Панель поиска и фильтрации -->
+                    <GroupBox Header="Поиск и фильтрация туров" Grid.Row="0" Margin="0,0,0,10" Padding="5">
+                        <WrapPanel VerticalAlignment="Center">
+                            <TextBlock Text="Направление:" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Width="120" Text="{Binding FilterDestination, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+
+                            <TextBlock Text="Мин. дней:" VerticalAlignment="Center" Margin="10,5,5,5"/>
+                            <TextBox Width="50" Text="{Binding FilterMinDays, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+
+                            <TextBlock Text="Класс отеля (звезд):" VerticalAlignment="Center" Margin="10,5,5,5"/>
+                            <ComboBox Width="70" SelectedValue="{Binding FilterHotelClass}" SelectedValuePath="Tag" Margin="5">
+                                <ComboBoxItem Content="Все" Tag="0" IsSelected="True"/>
+                                <ComboBoxItem Content="1" Tag="1"/>
+                                <ComboBoxItem Content="2" Tag="2"/>
+                                <ComboBoxItem Content="3" Tag="3"/>
+                                <ComboBoxItem Content="4" Tag="4"/>
+                                <ComboBoxItem Content="5" Tag="5"/>
+                            </ComboBox>
+                        </WrapPanel>
+                    </GroupBox>
+
+                    <!-- DataGrid Туров (ID скрыт/отсутствует, авто-сортировка кликом по заголовку) -->
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredTours}" SelectedItem="{Binding SelectedTour}"
+                              AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" CanUserSortColumns="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Номер тура" Binding="{Binding TourNumber}" Width="100"/>
+                            <DataGridTextColumn Header="Название тура" Binding="{Binding TourName}" Width="150"/>
+                            <DataGridTextColumn Header="Место отдыха" Binding="{Binding Destination}" Width="150"/>
+                            <DataGridTextColumn Header="Дней" Binding="{Binding DurationDays}" Width="60"/>
+                            <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate, StringFormat=dd.MM.yyyy}" Width="100"/>
+                            <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate, StringFormat=dd.MM.yyyy}" Width="110"/>
+                            <DataGridTextColumn Header="Отель (*)" Binding="{Binding HotelClass}" Width="70"/>
+                            <DataGridTextColumn Header="Мест" Binding="{Binding AvailableSeats}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Кнопки управления -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                        <Button Content="Добавить тур" Command="{Binding AddTourCommand}" Width="120" Margin="5"/>
+                        <Button Content="Редактировать" Command="{Binding EditTourCommand}" Width="120" Margin="5"/>
+                        <Button Content="Удалить тур" Command="{Binding DeleteTourCommand}" Width="100" Margin="5"/>
+                        <Button Content="Отчет Word (Все туры)" Command="{Binding ExportToursReportCommand}" Width="160" Margin="5" Background="#E1F5FE"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- ВКЛАДКА 2: ДОГОВОРЫ (Связанные таблицы, ComboBox) -->
+            <TabItem Header="Договоры">
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0" ItemsSource="{Binding Contracts}" SelectedItem="{Binding SelectedContract}"
+                              AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Номер договора" Binding="{Binding ContractNumber}" Width="120"/>
+                            <DataGridTextColumn Header="Дата" Binding="{Binding ContractDate, StringFormat=dd.MM.yyyy}" Width="90"/>
+                            <DataGridTextColumn Header="Тур" Binding="{Binding TourName}" Width="150"/>
+                            <DataGridTextColumn Header="Сотрудник" Binding="{Binding EmployeeName}" Width="150"/>
+                            <DataGridTextColumn Header="ФИО Заказчика" Binding="{Binding CustomerName}" Width="150"/>
+                            <DataGridTextColumn Header="Телефон" Binding="{Binding CustomerPhone}" Width="120"/>
+                            <DataGridTextColumn Header="Стоимость (руб.)" Binding="{Binding TotalCost, StringFormat=N2}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                        <Button Content="Оформить договор" Command="{Binding AddContractCommand}" Width="140" Margin="5"/>
+                        <Button Content="Редактировать" Command="{Binding EditContractCommand}" Width="120" Margin="5"/>
+                        <Button Content="Удалить" Command="{Binding DeleteContractCommand}" Width="100" Margin="5"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- ВКЛАДКА 3: СОТРУДНИКИ -->
+            <TabItem Header="Сотрудники">
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0" ItemsSource="{Binding Employees}" SelectedItem="{Binding SelectedEmployee}"
+                              AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ФИО Сотрудника" Binding="{Binding FullName}" Width="250"/>
+                            <DataGridTextColumn Header="Адрес проживания" Binding="{Binding Address}" Width="350"/>
+                            <DataGridTextColumn Header="Стаж (лет)" Binding="{Binding ExperienceYears}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                        <Button Content="Добавить" Command="{Binding AddEmployeeCommand}" Width="100" Margin="5"/>
+                        <Button Content="Редактировать" Command="{Binding EditEmployeeCommand}" Width="120" Margin="5"/>
+                        <Button Content="Удалить" Command="{Binding DeleteEmployeeCommand}" Width="100" Margin="5"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- ВКЛАДКА 4: ВЫПОЛНЕНИЕ ВАРИАНТНЫХ ЗАПРОСОВ И ОТЧЕТОВ -->
+            <TabItem Header="Запросы и Отчеты">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="380"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Панель запуска запросов -->
+                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                        <!-- Запрос 1 -->
+                        <GroupBox Header="1. Договора на дату" Margin="0,0,0,10">
+                            <StackPanel Margin="5">
+                                <DatePicker SelectedDate="{Binding SelectedQueryDate}" Margin="0,0,0,5"/>
+                                <Button Content="Выполнить запрос 1" Command="{Binding RunQuery1Command}"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Запрос 2 -->
+                        <GroupBox Header="2. Сотрудники с договорами >= N" Margin="0,0,0,10">
+                            <StackPanel Margin="5">
+                                <TextBox Text="{Binding SelectedMinContracts}" Margin="0,0,0,5"/>
+                                <Button Content="Выполнить запрос 2" Command="{Binding RunQuery2Command}"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Запрос 3 -->
+                        <GroupBox Header="3. Туры длительностью >= N дней" Margin="0,0,0,10">
+                            <StackPanel Margin="5">
+                                <TextBox Text="{Binding SelectedMinDuration}" Margin="0,0,0,5"/>
+                                <Button Content="Выполнить запрос 3" Command="{Binding RunQuery3Command}"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Запрос 4 + Отчет 2 -->
+                        <GroupBox Header="4. Туры по заказчику (+ Отчет Word)" Margin="0,0,0,10">
+                            <StackPanel Margin="5">
+                                <TextBox Text="{Binding SelectedCustomerName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5"/>
+                                <Button Content="Выполнить запрос 4" Command="{Binding RunQuery4Command}" Margin="0,0,0,5"/>
+                                <Button Content="Создать Word-отчет (Запрос 4)" Command="{Binding ExportCustomerReportCommand}" Background="#E8F5E9"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Запрос 5 + Группирующий отчет -->
+                        <GroupBox Header="5. Выручка сотрудников по датам" Margin="0,0,0,10">
+                            <StackPanel Margin="5">
+                                <Button Content="Выполнить расчет (Запрос 5)" Command="{Binding RunQuery5Command}" Margin="0,0,0,5"/>
+                                <Button Content="Группирующий отчет Word с итогами" Command="{Binding ExportGroupedReportCommand}" Background="#FFF3E0"/>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+
+                    <!-- Отображение результатов запросов -->
+                    <TabControl Grid.Column="1">
+                        <TabItem Header="Договоры на дату">
+                            <DataGrid ItemsSource="{Binding QueryDateContracts}" AutoGenerateColumns="False" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="№" Binding="{Binding ContractNumber}"/>
+                                    <DataGridTextColumn Header="Дата" Binding="{Binding ContractDate, StringFormat=dd.MM.yyyy}"/>
+                                    <DataGridTextColumn Header="Тур" Binding="{Binding TourName}"/>
+                                    <DataGridTextColumn Header="Сотрудник" Binding="{Binding EmployeeName}"/>
+                                    <DataGridTextColumn Header="Клиент" Binding="{Binding CustomerName}"/>
+                                    <DataGridTextColumn Header="Сумма" Binding="{Binding TotalCost, StringFormat=N2}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="Топ сотрудников">
+                            <DataGrid ItemsSource="{Binding QueryTopEmployees}" AutoGenerateColumns="False" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="150"/>
+                                    <DataGridTextColumn Header="Стаж" Binding="{Binding ExperienceYears}"/>
+                                    <DataGridTextColumn Header="Кол-во договоров" Binding="{Binding ContractsCount}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="Туры по длительности">
+                            <DataGrid ItemsSource="{Binding QueryMinDurationTours}" AutoGenerateColumns="False" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="№ Тура" Binding="{Binding TourNumber}"/>
+                                    <DataGridTextColumn Header="Название" Binding="{Binding TourName}"/>
+                                    <DataGridTextColumn Header="Дней" Binding="{Binding DurationDays}"/>
+                                    <DataGridTextColumn Header="Место" Binding="{Binding Destination}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="Туры заказчика">
+                            <DataGrid ItemsSource="{Binding QueryCustomerTours}" AutoGenerateColumns="False" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="№ Договора" Binding="{Binding ContractNumber}"/>
+                                    <DataGridTextColumn Header="Дата" Binding="{Binding ContractDate, StringFormat=dd.MM.yyyy}"/>
+                                    <DataGridTextColumn Header="Тур" Binding="{Binding TourName}"/>
+                                    <DataGridTextColumn Header="Дней" Binding="{Binding DurationDays}"/>
+                                    <DataGridTextColumn Header="Стоимость" Binding="{Binding TotalCost, StringFormat=N2}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="Сводка выручки (Группировка)">
+                            <DataGrid ItemsSource="{Binding QueryGroupedSales}" AutoGenerateColumns="False" IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Сотрудник" Binding="{Binding EmployeeName}" Width="200"/>
+                                    <DataGridTextColumn Header="Дата договора" Binding="{Binding ContractDate, StringFormat=dd.MM.yyyy}" Width="120"/>
+                                    <DataGridTextColumn Header="Сумма за день (руб.)" Binding="{Binding DailyTotal, StringFormat=N2}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

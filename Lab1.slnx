@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Lab1/TravelAgency.WPF.csproj" />
+  <Project Path="TravelAgency.DataAccess/TravelAgency.DataAccess.csproj" />
+  <Project Path="TravelAgency.Domain/TravelAgency.Domain.csproj" />
+  <Project Path="TravelAgency.Reports/TravelAgency.Reports.csproj" />
+</Solution>
